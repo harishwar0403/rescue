@@ -5,6 +5,7 @@ const notificationSchema = new mongoose.Schema(
     volunteerID: String,
     userData: { type: Object, required: true },
     request: String,
+    isAccepted: Boolean,
   },
   {
     timestamps: true,

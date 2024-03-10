@@ -23,6 +23,8 @@ export const loginUser = async (data) => {
         window.location.href = "/home";
         Cookies.set("userData", JSON.stringify(tokenRes.data));
       }
+    } else {
+      toast.error(response.error);
     }
   } catch (error) {
     console.log(error);

@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { notificationUrl } from "../utils/api";
 import toast from "react-hot-toast";
 
-export const addNotification = async (data) => {
+export const addNotification = async (data, accept) => {
   try {
     const response = await fetch(`${notificationUrl}/add`, {
       method: "POST",
@@ -12,7 +12,11 @@ export const addNotification = async (data) => {
       body: JSON.stringify(data),
     }).then((res) => res.json());
     if (response.status === "ok") {
-      toast.success("Request Send");
+      if (accept == "Accepted") {
+        toast.success("Acceptation Send");
+      } else {
+        toast.success("Request Send");
+      }
     } else {
       toast.error("Failed");
     }
@@ -37,18 +41,17 @@ export const getNotification = async (id) => {
     console.log(error);
   }
 };
-export const updateNotification = async (id, data) => {
+export const updateNotification = async (id) => {
   try {
     const response = await fetch(`${notificationUrl}/${id}`, {
-      method: "DELETE",
+      method: "PUT",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(data),
     }).then((res) => res.json());
     if (response.status === "ok") {
-      toast.error(response.data);
-      return response.status;
+      toast.success("Acceptation Send");
+      return response.data;
     } else {
       toast.error(response.data);
     }
@@ -67,6 +70,26 @@ export const deleteNotification = async (id) => {
     if (response.status === "ok") {
       toast.error(response.data);
       return response.status;
+    } else {
+      toast.error("Something went wrong");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getUserNotification = async (id, isAccepted) => {
+  try {
+    const response = await fetch(
+      `${notificationUrl}/getUser?userID=${id}&isAccepted=${isAccepted}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    ).then((res) => res.json());
+    if (response.status === "ok") {
+      return response.data;
     } else {
       toast.error("Something went wrong");
     }

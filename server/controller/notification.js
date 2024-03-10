@@ -3,7 +3,9 @@ const { FloodWebNotification } = require("../model/notification");
 exports.getnotificationByID = async (req, res, next) => {
   const { volunteerID } = req.query;
   try {
-    const notification = await FloodWebNotification.find({ volunteerID });
+    const notification = await FloodWebNotification.find({
+      volunteerID,
+    });
     if (notification) {
       res.status(200).send({ status: "ok", data: notification });
     } else {
@@ -48,7 +50,8 @@ exports.updateNotification = async (req, res, next) => {
         userID: prev.userID,
         volunteerID: prev.volunteerID,
         userData: prev.userData,
-        request: req.body.request,
+        request: prev.request,
+        isAccepted: true,
       };
       const response = await FloodWebNotification.findByIdAndUpdate(
         req.params.id,
@@ -60,6 +63,22 @@ exports.updateNotification = async (req, res, next) => {
       res.status(200).send({ status: "ok", data: response });
     } else {
       res.status(200).send({ status: "error", data: "Request Failed" });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+exports.getUsernotificationByID = async (req, res, next) => {
+  const { userID, isAccepted } = req.query;
+  try {
+    const notification = await FloodWebNotification.find({
+      userID,
+      isAccepted,
+    });
+    if (notification) {
+      res.status(200).send({ status: "ok", data: notification });
+    } else {
+      res.status(200).send({ status: "error", data: [] });
     }
   } catch (error) {
     next(error);

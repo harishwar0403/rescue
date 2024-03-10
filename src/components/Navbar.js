@@ -5,19 +5,62 @@ import { Link, useLocation } from "react-router-dom";
 
 import React from "react";
 import Cookies from "js-cookie";
-import { Button, Menu, MenuItem, Typography } from "@mui/material";
-import { KeyboardArrowDown, Logout } from "@mui/icons-material";
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Modal,
+  Popover,
+  SnackbarContent,
+  Stack,
+  Typography,
+} from "@mui/material";
+import {
+  Delete,
+  KeyboardArrowDown,
+  Logout,
+  Notifications,
+} from "@mui/icons-material";
+import { getUserNotification } from "../controllers/notification";
+import { getallUser } from "../controllers/user";
 
 export default function Navbar() {
   const location = useLocation();
-
+  const [users, setusers] = useState([]);
+  const [notifications, setnotifications] = useState([]);
   const [clicked, setclicked] = useState(false);
   const [isLogged, setisLogged] = useState(false);
   const [userData, setuserData] = useState({});
   const [anchorEl, setanchorEl] = useState(null);
+  const [snackbarAnchorEl, setSnackbarAnchorEl] = useState(null);
+  const [notificationID, setnotificationID] = useState("");
+  const [openNotificationDltModel, setopenNotificationDltModel] =
+    useState(false);
   const open = Boolean(anchorEl);
+  const openSnackbar = Boolean(snackbarAnchorEl);
+  const handleOpenSnackbar = (event) => {
+    fetchNotifications();
+    setSnackbarAnchorEl(event.currentTarget);
+  };
+  const handleCloseSnackbar = () => {
+    setSnackbarAnchorEl(null);
+  };
   const handleOpen = (event) => {
     setanchorEl(event.currentTarget);
+  };
+  const deleteNotification = (id) => {
+    if (id) {
+      deleteNotification(id);
+    }
+  };
+  const handleOpenDeleteModel = (id) => {
+    handleCloseSnackbar();
+    setnotificationID(id);
+    setopenNotificationDltModel(true);
+  };
+  const handleCloseDeleteModel = () => {
+    setopenNotificationDltModel(false);
   };
   const handleClose = () => {
     setanchorEl(null);
@@ -31,9 +74,41 @@ export default function Navbar() {
     if (scahedata) {
       setisLogged(true);
       setuserData(scahedata);
+      fetchNotifications();
+      getallUser().then((user) => {
+        setusers(user);
+      });
+    } else {
+      setuserData(false);
     }
   }, [cookie]);
-
+  const getUserName = (id) => {
+    const userName = users.find((i) => i._id == id);
+    return userName.name;
+  };
+  const fetchNotifications = () => {
+    getUserNotification(userData._id, true).then((data) => {
+      if (data) {
+        setnotifications(data);
+      }
+    });
+  };
+  const DeleteModel = () => {
+    return (
+      <Modal
+        onClose={handleCloseDeleteModel}
+        open={openNotificationDltModel}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
+        <Stack sx={{ borderRadius: "10px", padding: "10px" }}>
+          <Typography sx={{ color: "slategray", fontWeight: "bold" }}>
+            NOTE:Deleting this notification will also delete the associated
+            request.
+          </Typography>
+        </Stack>
+      </Modal>
+    );
+  };
   return (
     <nav className="NavbarItems" style={{ zIndex: 1 }}>
       <h1 className="Navbar-logo">Flood Rescue Service Provider</h1>
@@ -113,7 +188,72 @@ export default function Navbar() {
         >
           {isLogged ? userData.name : "Sign Up"}
         </Button>
+        {(userData.role !== "VOLUNTEER" || !userData) && (
+          <IconButton
+            disabled={!userData}
+            aria-describedby={open ? "notification" : undefined}
+            sx={{
+              color: "orange",
+              "&:hover": {
+                color: "darkorange",
+              },
+            }}
+            onClick={handleOpenSnackbar}
+          >
+            <Notifications />
+          </IconButton>
+        )}
       </ul>
+      <Popover
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={openSnackbar}
+        anchorEl={snackbarAnchorEl}
+        onClose={handleCloseSnackbar}
+        id="notification"
+        sx={{
+          "& .MuiPopover-paper": {
+            backgroundColor: "unset",
+          },
+          marginTop: 5,
+        }}
+      >
+        <Stack gap={2} sx={{ top: 10 }}>
+          {notifications?.map((item, index) => {
+            return (
+              <SnackbarContent
+                key={index}
+                sx={{ background: "#c97f23e0", border: "1px solid black" }}
+                message={`${getUserName(item.volunteerID)} accepted your ${
+                  item.request
+                } request`}
+                // action={
+                //   <IconButton
+                //     onClick={() => {
+                //       handleOpenDeleteModel(item._id);
+                //     }}
+                //     sx={{
+                //       color: "darkred",
+                //       "&:hover": {
+                //         color: "white",
+                //       },
+                //     }}
+                //   >
+                //     <Delete />
+                //   </IconButton>
+                // }
+              />
+            );
+          })}
+        </Stack>
+      </Popover>
+
       <Menu
         sx={{ zIndex: 2, padding: "0 10px" }}
         MenuListProps={{

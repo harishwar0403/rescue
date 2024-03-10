@@ -10,8 +10,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { KeyboardArrowRight, Refresh } from "@mui/icons-material";
 import {
+  addNotification,
   deleteNotification,
   getNotification,
+  updateNotification,
 } from "../controllers/notification";
 import toast from "react-hot-toast";
 
@@ -43,6 +45,8 @@ export default function NotificationContainer({ userData }) {
     pincode: "",
     id: "",
     request: "",
+    allData: {},
+    isAccepted: "",
   });
   const [rows, setrows] = useState([]);
   const getTime = (timestamp) => {
@@ -73,6 +77,7 @@ export default function NotificationContainer({ userData }) {
       pincode: "",
       id: "",
       request: "",
+      isAccepted: "",
     });
     if (userData) {
       getNotification(userData._id).then((data) => {
@@ -86,6 +91,7 @@ export default function NotificationContainer({ userData }) {
             date: getDate(item.createdAt),
             userData: item.userData,
             request: item.request,
+            isAccepted: item.isAccepted,
           }));
           if (rowsArr.length !== "") {
             setrows(rowsArr);
@@ -116,7 +122,17 @@ export default function NotificationContainer({ userData }) {
       phone: row.userData.phone,
       pincode: row.userData.pincode,
       request: row.request,
+      allData: row,
+      isAccepted: row.isAccepted,
     });
+  };
+  const handleSendAccepted = (id) => {
+    if (id) {
+      updateNotification(id);
+      fetchData();
+    } else {
+      toast.error("Select notification from the table");
+    }
   };
   return (
     <Box
@@ -258,7 +274,14 @@ export default function NotificationContainer({ userData }) {
           }}
         >
           {[
-            { name: "Accept", onclick: undefined, disabled: true },
+            {
+              name: data.isAccepted ? "Accepted" : "Accept",
+              onclick: () => {
+                handleSendAccepted(data.id);
+                console.log(data);
+              },
+              disabled: data?.isAccepted,
+            },
             {
               name: "Delete",
               onclick: handleDelete,
