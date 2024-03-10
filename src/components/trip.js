@@ -22,8 +22,8 @@ function Trip() {
         />
         <Tripdata
           image={Trip3}
-          heading="Other Service"
-          text="Other services are available for people those how are affected by flood, If you need request send the request"
+          heading="Boat Service"
+          text="Boat services are available for people those how are affected by flood, If you need request send the request"
         />
       </div>
     </div>

@@ -9,7 +9,7 @@ const Footer = () => {
                     <p>Choose your favourite</p>
                 </div>
 
-                <div>
+                {/* <div>
                     <a href="/">
                         <i className="fa-brands fa-facebook-square"></i>
                     </a>
@@ -25,7 +25,7 @@ const Footer = () => {
                     <a href="/">
                         <i className="fa-brands fa-twitter-square"></i>
                     </a>
-                </div>
+                </div> */}
             </div>
 
             <div className="bottom">
