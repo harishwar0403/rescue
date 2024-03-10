@@ -12,7 +12,7 @@ export const MenuItems = [
         
     },
     {
-        title : "Pro",
+        title : "Services",
         url : "/Pro",
         cName : "nav-links",
         
