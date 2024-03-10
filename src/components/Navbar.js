@@ -137,7 +137,7 @@ export default function Navbar() {
                 </Link>
               </li>
             );
-          } else if (item.title == "Pro" && userData.role == "VOLUNTEER") {
+          } else if (item.title == "Services" && userData.role == "VOLUNTEER") {
             return null;
           } else {
             return (
