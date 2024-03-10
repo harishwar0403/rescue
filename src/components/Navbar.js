@@ -84,7 +84,7 @@ export default function Navbar() {
   }, [cookie]);
   const getUserName = (id) => {
     const userName = users.find((i) => i._id == id);
-    return userName.name;
+    return userName;
   };
   const fetchNotifications = () => {
     getUserNotification(userData._id, true).then((data) => {
@@ -230,7 +230,7 @@ export default function Navbar() {
               <SnackbarContent
                 key={index}
                 sx={{ background: "#c97f23e0", border: "1px solid black" }}
-                message={`${getUserName(item.volunteerID)} accepted your ${
+                message={`${getUserName(item.volunteerID)?.name}(${getUserName(item.volunteerID)?.phone}) accepted your ${
                   item.request
                 } request`}
                 // action={
